@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fun with Filters and Frequencies!</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+    <style>
+        body {
+            padding: 10px;
+            width: 1000px;
+            margin: auto;
+            text-align: left;
+            font-weight: 300;
+            font-family: 'Open Sans', sans-serif;
+            color: #121212;
+        }
+
+        h1:first-of-type {
+            font-size: 30px; /* Increase font size to 26 pixels */
+            font-weight: bold; /* Make it bold */
+            text-align: center; /* Center align it */
+        }
+
+        h1, h2 {
+            font-size: 24px; /* Increase font size for other headings */
+            text-align: center; /* Center align them */
+        }
+
+        h3 {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        h4 {
+            font-size: 24px; /* Increase font size for other headings */
+            text-align: left; /* Center align them */
+        }
+
+        figcaption {
+            display: inline-block;
+            font-size: 14px;
+            max-width: 100%;
+        }
+    </style>
+    </head>
+    <body>
+        <h1 align="middle">CS180 Fall of 2023</h1>
+        <h1 align="middle">Image Manipulation and Computational Photography</h1>
+        <h1 align="middle">Fun with Filters and Frequencies!</h1>
+        <h2 align="middle">Alexander Ng</h2>
+
+
+
+        <br>
+        <h4>Part 1: Fun with Filters </h4>
+        <p>
+            In this part, we will build intuitions about 2D convolutions and filtering.
+        </p>
+        <div>
+            <div align="left">
+                <figcaption style="font-size: 19px;"></figcaptionstyle><b>Part 1.1: Finite Difference Operator</b></figcaption>
+                <p>
+                    Our process starts with the application of the finite difference method, computing partial derivatives in both 
+                    the x and y directions of the cameraman image. This is achieved by convolving the image with the operators D_x and D_y. 
+                    Subsequently, we proceed to calculate and reveal the gradient magnitude image. As a final step in this analytical journey, 
+                    we fine-tune the image into an edge representation by selecting an appropriate threshold for binaryization.
+                </p>
+                <table style="width:100%">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <figcaption>Results:</figcaption>
+                                <img src="out/gradient_cameraman.png" align="middle" width="1000px">
+                            </td>
+                        </tr>
+                        <br><br>
+                        <tr>
+                            <td>
+                                <figcaption>Subset of thresholds measured:</figcaption>
+                                <img src="out/cameraman_thresholds.png" align="middle" width="1000px">
+                                <figcaption></figcaption>
+                            </td>
+                        </tr>
+
+                </tbody></table>
+            </div>
+
+
+            <div align="left">
+                <figcaption style="font-size: 19px;"><b>Part 1.2: Derivative of Gaussian (DoG) Filter</b></figcaption>
+                <p>
+                    The results with just the difference operator were rather noisy. Luckily, we have a smoothing operator handy: the Gaussian filter G.
+                    We created a blurred version of the original image by convolving with a gaussian and repeat the procedure in the previous part.
+                </p>
+                <table style="width:100%">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <figcaption>Results:</figcaption>
+                                <img src="out/smoothened_cameraman_results.png" align="middle" width="1000px">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <figcaption>Comparison:</figcaption>
+                                <img src="out/cameraman_gaussian_compare.png" align="middle" width="1000px">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>
+                    As we can see, the image after Gaussian Blur shows wider edges and were able to have clean edges with a significantly lower threshold. 
+            </div>
+
+            <div align="left">
+                <figcaption style="font-size: 19px;"><b>Part 1.2: Derivative of Gaussian (DoG) Filter</b></figcaption>
+                <p>
+                    Now, to speed things up, I can apply the Dx and Dy filters on the gaussian kernel itself. This allows me to save a convolution operation
+                    by applying the new kernel on the image.
+                </p>
+                <table style="width:100%">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <figcaption>Results:</figcaption>
+                                <img src="out/DoG_results.png" align="middle" width="1000px">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <figcaption>Comparisons:</figcaption>
+                                <img src="out/DoG_Compare.png" align="middle" width="1000px">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>
+                    Although both processes acheive the same results, there is a speed up of around 50%.
+            </div>
+        </div>
+
+        <br>
+        <h4>Part 2: Fun with Frequencies! </h4>
+        <div align="left">
+            <figcaption style="font-size: 19px;"><b>Part 2.1: Image "Sharpening"</b></figcaption>
+            <p>
+                In this section, we'll delve into image sharpening using the unsharp mask technique. 
+                It's time to sharpen up some images featuring my cat, Tofu, and a picture of the Taj Mahal. 
+                We'll explore the intriguing process of extracting high frequencies from the images by subtracting 
+                a blurred version from the originals. Then, we'll introduce a scaled version of these high frequencies 
+                (scaled by alpha) back into the original images, effectively enhancing the higher frequencies and giving 
+                them a sharper appearance. Let's see what unfolds as we embark on this journey to sharpen our images!
+            </p>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <figcaption>Tofu by the window</figcaption>
+                            <img src="out/sharpened_tofu_results.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <figcaption>Taj image</figcaption>
+                            <img src="out/taj_sharpened_results.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <p>
+                Great results! Now, what if we turn our attention to sharpening those somewhat blurry images? 
+                Can this technique actually aid in 'unblurring' them?
+            </p>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <figcaption>Results</figcaption>
+                            <img src="out/blurred_then_sharpened_taj_results.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Indeed, it appears that our sharpening process did not succeed in 'unblurring' our images; instead, 
+                it sharpened the blurred ones. This outcome stems from the nature of the sharpening process, 
+                which amplifies existing high frequencies but lacks the capability to recover lost frequencies that result from blurriness.
+            </p>
+
+            <figcaption style="font-size: 19px;"><b>Part 2.2: Hybrid Images</b></figcaption>
+            <p>
+                Here's a fascinating tidbit: our eyes have a remarkable ability to discern high-frequency details when 
+                observing objects up close and low-frequency features when looking at things from a distance. Capitalizing 
+                on this visual phenomenon, we delve into the intriguing world of hybrid images. This technique involves merging 
+                two distinct images by cleverly combining their unique frequency components. To obtain the low-frequency characteristics, 
+                we employ Gaussian blur, creating a smooth, distant perspective. Conversely, we extract the high-frequency elements by 
+                subtracting the blurred image from the original, resulting in a sharper, close-up view. This ingenious approach allows us 
+                to craft hybrid images that undergo captivating transformations as our perspective shifts.
+            </p>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <!-- <figcaption>Grayscaled Nutmeg and Derek hybrid</figcaption> -->
+                            <img src="out/nutmeg_derek_gray_hybrid_results.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- <figcaption>Colorized Nutmeg and Derek hybrid</figcaption> -->
+                            <img src="out/nutmeg_derek_hybrid_results.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- <figcaption>Tofu's various faces hybrid</figcaption> -->
+                            <img src="out/tofus_various_face_hybrids.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- <figcaption>Tofu and my girlfriend's cat hybrid</figcaption> -->
+                            <img src="out/tofu_nori_hybrid.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <figcaption style="font-size: 18px;"><b>Failed hybrids</b></figcaption>
+            <p>
+                As one might expect, there are limitations to the extent to which this hybrid technique can be applied. 
+                One significant constraint is that it cannot generate a meaningful hybrid between two images that lack 
+                similarities or common features. This technique relies on the interplay and combination of frequency components 
+                from both images, so when there are no shared characteristics, the process becomes impractical.
+            </p>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="out/failed_hybrid_apple_taj.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <figcaption style="font-size: 18px;"><b>Fourier analysis</b></figcaption>
+            <p>
+                To gain insight into how these images appear within the frequency spectrum, 
+                we can perform a Fourier analysis. This involves applying np.log(np.abs(np.fft.fftshift(np.fft.fft2(grayed_image)))) 
+                to the images. This process allows us to visualize and understand the distribution of frequencies within the images.
+            </p>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="out/tofu_nori_frequencies_hybrid.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <figcaption style="font-size: 18px;"><b>Color analysis</b></figcaption>
+            <p>
+                It appears that color works more effectively for the low-frequency component in this context. 
+                Our observations reveal that the high-frequency component has a relatively weaker impact when it comes to color. 
+                This phenomenon arises from the fact that color variations within fine details are less conspicuous and influential 
+                compared to changes in grayscale intensity.
+            </p>
+
+            <h4>Multi-resolution Blending and the Oraple journey</h4>
+            <figcaption style="font-size: 19px;"><b>Part 2.3: Gaussian and Laplacian Stacks</b></figcaption>
+            <p>
+                To create our Gaussian stack, we started by giving the original image a soothing Gaussian filter treatment, 
+                and then we went full chef mode, stacking on more Gaussian filters like a tower of flavor, each adding its unique 
+                touch to the frequency mix. But the real magic happened when we dived into the world of Laplacian stacks. Taking 
+                those consecutive Gaussian-filtered images, we played a bit of a subtractive game, revealing mid-band frequency images 
+                that acted like the secret sauce between our Gaussian layers. The final piece of this visual puzzle? The last Laplacian 
+                image matched the lowest-frequency image in our Gaussian stack. What's truly nifty is that if we blend all these Laplacian 
+                images together, we can whip up the original image once again, proving that our image recipe has some deliciously clever 
+                tricks tucked away!
+            </p>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <figcaption>Gaussian stacks and Laplacian stacks of apple.jpeg</figcaption>
+                            <img src="out/apple_laplacian_gaussian_plots.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <figcaption>Gaussian stacks and Laplacian stacks of orange.jpeg</figcaption>
+                            <img src="out/orange_laplacian_gaussian_plots.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <figcaption>Gaussian stacks and Laplacian stacks of orange.jpeg</figcaption>
+                            <img src="out/orange_laplacian_gaussian_plots.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <figcaption style="font-size: 19px;"><b>Part 2.4: Multiresolution Blending (a.k.a. the oraple!)</b></figcaption>
+            <p>
+                To work our magic in blending these images, we start by using a mask image that defines the boundaries. 
+                We give it the Gaussian treatment to create a whole new stack, setting the stage for our creative fusion. 
+                Then, we venture into the Laplacian stacks for each of the images and concoct a captivating blend: it's a 
+                sum of "mask times Laplacian image 1" plus "1 minus mask times Laplacian image 2." This dance gives us a 
+                beautifully merged version at each frequency band. And when we add up all these harmoniously merged frequency 
+                bands, we've got ourselves a visually delightful masterpiece, proving once again that the art of image 
+                manipulation is all about the right ingredients and a dash of creative flair!
+            </p>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <div style="display: flex;">
+                            <div style="flex: 1; text-align: center;">
+                                <figcaption>Behold! The Oraple</figcaption>
+                                <img src="out/oraple.jpg" align="middle" width="500px">
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <figcaption>Nori and Tofu</figcaption>
+                                <img src="out/tofu_nori.jpg" align="middle" width="500px">
+                            </div>
+                        </div>
+                    </tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <figcaption>Layers used for Oraple</figcaption>
+                            <img src="out/orapple_masks.png" align="middle" width="1000px">
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+                Note: The mask used for Nori and Tofu is the same as apple
+            </p>
+            <figcaption style="font-size: 19px;"><b>Iregular masking</b></figcaption>
+            <br>
+            <table style="width:100%">
+                <tbody>
+                    <tr>
+                        <td>
+                            <figcaption>Eye in the apple</figcaption>
+                            <img src="out/tofapple.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <figcaption>Dragon in the night sky</figcaption>
+                            <img src="out/flying_dragon_result.png" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <figcaption>Magnified result of blending dragon in the night sky</figcaption>
+                            <img src="out/flying_dragon_in_night.jpg" align="middle" width="1000px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        
+    </body>
+</html>
